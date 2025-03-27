@@ -1,6 +1,4 @@
-import { ADS_PAUSE_CONFIG_KEY, ANALYTICS_CONFIG_KEY, LEADERBOARD_CONFIG_KEY, MATCH_LOCATION_URL_CONFIG_KEY, PAUSE_ADS_CONFIG_KEY, PAYMENTS_CONFIG_KEY, REVIEW_CONFIG_KEY, SECOND, SEND_POST_CONFIG_KEY, START_ADS_AFTER_CLICK_CONFIG_KEY, START_ADS_CONFIG_KEY, START_ADS_FORCED_CONFIG_KEY, STATS_CONFIG_KEY, VK_VERSION, WORD_REMOTE_DESCR_CONFIG_KEY } from "../constants";
-import Game from "../Game";
-import gipi from "../gipi";
+
 import { Empty, ICatalogItem, ILbEntrie, IPurchaseData } from "../interfaces";
 
 export default class Adapter {
@@ -17,10 +15,10 @@ export default class Adapter {
 
     protected config: any = {};
 
-    protected game: Game | Empty = null;
+    
 
     constructor() {
-        this.initConfig();
+    
 
         setTimeout(() => {
             this.create();
@@ -43,25 +41,9 @@ export default class Adapter {
         return Promise.resolve(true);
     }
     
-    public setGame(game: Game): void {
-        this.game = game;
-    }
+   
 
-    protected initConfig(): void {
-        this.setOption(PAUSE_ADS_CONFIG_KEY, false);
-        this.setOption(START_ADS_CONFIG_KEY, false);
-        this.setOption(START_ADS_FORCED_CONFIG_KEY, false);
-        this.setOption(START_ADS_AFTER_CLICK_CONFIG_KEY, false);
-        this.setOption(SEND_POST_CONFIG_KEY, false);
-        this.setOption(REVIEW_CONFIG_KEY, false);
-        this.setOption(ADS_PAUSE_CONFIG_KEY, 3);
-        this.setOption(LEADERBOARD_CONFIG_KEY, false);
-        this.setOption(PAYMENTS_CONFIG_KEY, false);
-        this.setOption(ANALYTICS_CONFIG_KEY, false);
-        this.setOption(STATS_CONFIG_KEY, false);
-        this.setOption(WORD_REMOTE_DESCR_CONFIG_KEY, false);
-        this.setOption(MATCH_LOCATION_URL_CONFIG_KEY, false)
-    }
+    
 
     public getOption(key: string): any {
         return this.config[key];
@@ -87,13 +69,9 @@ export default class Adapter {
         //
     }
 
-    public get version(): string {
-        return VK_VERSION;// DEF_VERSION;
-    }
+   
 
-    public getVersion(): string {
-        return this.version;
-    }
+   
 
     protected callWaiters(): void {
         this.waiters.forEach((waiter: any) => {
@@ -110,7 +88,7 @@ export default class Adapter {
     }
 
     public canReview(): Promise<boolean> {
-        return Promise.resolve(this.getOption(REVIEW_CONFIG_KEY));
+        return Promise.resolve(false);
     }
 
     public isReview(): Promise<boolean> {
@@ -355,7 +333,7 @@ class ServerData {
     private actualData: string = "";
     private lastSaveTime: number = 0;
     private timer: any = null;
-    private saveStep: number = SECOND;
+    private saveStep: number = 1000;
 
     private score: number | Empty;
     private extra_data: string | Empty;
@@ -448,7 +426,7 @@ class ServerData {
                 console.log("SERVER loaded", e);
                 const json: string = e?.data?.game_data || "";
                 if(json)this.actualData = json;
-                return Promise.resolve(json ? gipi.parseJSON(json) : null);
+                return Promise.resolve(json ? JSON.parse(json) : null);
             })
             .catch((e: any) => {
                 console.log("SERVER load error", e);
@@ -485,9 +463,9 @@ class ServerData {
             req.onreadystatechange = (aEvt) => {
                 if (req.readyState == 4) {
                     if(req.status == 200) {
-                        resolve(gipi.parseJSON(req.responseText));
+                        resolve(JSON.parse(req.responseText) );
                     } else {
-                        reject(gipi.parseJSON(req.responseText));
+                        reject(JSON.parse(req.responseText));
                     }
                 }
             };

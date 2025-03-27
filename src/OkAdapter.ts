@@ -1,8 +1,6 @@
-import { isMobile } from "mobile-device-detect";
-import { ANALYTICS_CONFIG_KEY, GAME_CODE, LEADERBOARD_CONFIG_KEY, OK_VERSION, PAUSE_ADS_CONFIG_KEY, PAYMENTS_CONFIG_KEY, REVIEW_CONFIG_KEY, SECOND, SEND_POST_CONFIG_KEY, START_ADS_CONFIG_KEY, STATS_CONFIG_KEY, WORD_REMOTE_DESCR_CONFIG_KEY } from "../constants";
-import EventsCore from "../EventsCore";
-import { Empty, ICatalogItem, ILbEntrie, IPurchaseData } from "../interfaces";
-import Adapter from "./Adapter";
+import EventsCore from "./EventsCore";
+import { Empty, ICatalogItem, ILbEntrie, IPurchaseData } from "./interfaces";
+import Adapter from "./adapter/Adapter";
 
 const events: EventsCore = new EventsCore();
 
@@ -21,22 +19,9 @@ export default class OkAdapter extends Adapter {
     private appId: number = 512002798511;
     private appUrl: string = "https://ok.ru/game/" + this.appId;
 
-    public get version(): string {
-        return OK_VERSION;
-    }
+   
 
-    protected initConfig(): void {
-        super.initConfig();
-        this.setOption(SEND_POST_CONFIG_KEY, true);
-        this.setOption(PAUSE_ADS_CONFIG_KEY, true);
-        this.setOption(START_ADS_CONFIG_KEY, true);
-        this.setOption(REVIEW_CONFIG_KEY, true);
-        this.setOption(LEADERBOARD_CONFIG_KEY, true);
-        this.setOption(PAYMENTS_CONFIG_KEY, true);
-        this.setOption(ANALYTICS_CONFIG_KEY, true);
-        this.setOption(STATS_CONFIG_KEY, true);
-        this.setOption(WORD_REMOTE_DESCR_CONFIG_KEY, true);
-    }
+    
 
     protected create(): void {
         this.initParams();
@@ -143,8 +128,8 @@ export default class OkAdapter extends Adapter {
     }
 
     private initServer(): void {
-        console.log("TEST", this.params, GAME_CODE);
-        this.server.init(GAME_CODE + OK_VERSION, this.getId());
+        // console.log("TEST", this.params, GAME_CODE);
+        this.server.init("Adapter_test" + "OK", this.getId());
     }
     
     public save(data: any): any {
@@ -389,7 +374,7 @@ export default class OkAdapter extends Adapter {
                                 console.error(e);
                                 f();
                             });
-                    }, (1 + Math.pow(maxAttempts - attempts, 2) * .3) * SECOND);
+                    }, (1 + Math.pow(maxAttempts - attempts, 2) * .3) * 1000);
                 };
 
             f();
@@ -642,7 +627,7 @@ class RewardedADS {
         })
         .then((res: any) => {
             this.ready = false;
-            setTimeout(() => this.load(), SECOND);
+            setTimeout(() => this.load(), 1000);
             listeners.forEach((f: any) => events.removeListener(f));
             return res;
         });
@@ -714,7 +699,7 @@ class StickyBanner {
             const data: any = JSON.parse(json),
                 supported: Array<any> = data.supported;
 
-            if(isMobile) {
+            if(false) {
                 bannerFormat = "bar_outer";
                 this.side = "bottom";
             } else {

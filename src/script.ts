@@ -1,4 +1,4 @@
-import OkAdapter from "./adapter/OkAdapter";
+import OkAdapter from "./OkAdapter";
 
 
 
@@ -26,11 +26,7 @@ addStatButton?.addEventListener('click', sendStatistic);
 removeStatButton?.addEventListener('click', removeStatistic);
 
 function initAdapter(): boolean {
-    if (typeof FAPI === 'undefined' || !FAPI.Util) {
-        console.error('[error] FAPI не загружен');
-        return false;
-    }
-
+   
     adapter = new OkAdapter();
     console.log("adapter2 =", adapter);
 
@@ -111,25 +107,25 @@ function removeStatistic(): void {
     console.log('Удаление статистики');
 }
 
-window.API_callback = function(method: string, result: any, data: any): void {
-    console.log("API_callback:", method, result, data);
-};
+// window.API_callback = function(method: string, result: any, data: any): void {
+//     console.log("API_callback:", method, result, data);
+// };
 
-if (typeof FAPI !== 'undefined') {
-    initAdapter();
-} else {
-    console.log('[info] Ожидание загрузки FAPI...');
-    const checkFAPI = setInterval(() => {
-        if (typeof FAPI !== 'undefined') {
-            clearInterval(checkFAPI);
-            initAdapter();
-        }
-    }, 100);
+
+initAdapter();
+// } else {
+//     console.log('[info] Ожидание загрузки FAPI...');
+//     const checkFAPI = setInterval(() => {
+//         if (typeof FAPI !== 'undefined') {
+//             clearInterval(checkFAPI);
+//             initAdapter();
+//         }
+//     }, 100);
     
-    setTimeout(() => {
-        if (!isAdapterReady) {
-            clearInterval(checkFAPI);
-            console.warn('[warning] FAPI не загружен');
-        }
-    }, 5000);
-}
+//     setTimeout(() => {
+//         if (!isAdapterReady) {
+//             clearInterval(checkFAPI);
+//             console.warn('[warning] FAPI не загружен');
+//         }
+//     }, 5000);
+// }
