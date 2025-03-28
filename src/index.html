@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <script type="text/javascript" src="//api.ok.ru/js/fapi5.js" defer="defer"></script>
 </head>
+
 <body>
     <div class="scroll-container">
         <div class="app-container">
@@ -15,7 +17,7 @@
                 <h1>Документация</h1>
                 <div class="status-indicator" id="apiStatus">OK API</div>
             </header>
-    
+
             <main class="dashboard">
                 <!-- Блок рекламы -->
                 <section class="control-card">
@@ -30,7 +32,7 @@
                         <button id="hideBunner" class="btn btn-secondary">hide Bunner</button>
                     </div>
                 </section>
-    
+
                 <!-- Блок игрока -->
                 <section class="control-card">
                     <h2 class="section-title">
@@ -38,21 +40,21 @@
                         Player
                     </h2>
                     <div class="input-group">
-                        
+
                         <div class="button-group">
                             <textarea id="textArea" placeholder="Введите данные для saveData..."></textarea>
                             <button class="btn btn-secondary" id="saveData">saveData</button>
-                            <button class="btn btn-secondary" id="loadData">getId</button>
+                            <button class="btn btn-secondary" id="getId">getId</button>
                             <button class="btn btn-secondary" id="getName">getName</button>
                             <button class="btn btn-secondary" id="isAuth">isAuth</button>
                             <button class="btn btn-secondary" id="auth">auth</button>
                             <button class="btn btn-secondary" id="getAvatar">getAvatar</button>
-    
-                            <button class="btn btn-secondary">getData</button>
+
+                            <button class="btn btn-secondary" id="loadData">getData</button>
                         </div>
                     </div>
                 </section>
-    
+
                 <!-- Блок платежей -->
                 <section class="control-card">
                     <h2 class="section-title">
@@ -66,7 +68,7 @@
                         <button class="btn btn-primary" id="buy">buy</button>
                     </div>
                 </section>
-    
+
                 <!-- Блок социальных функций -->
                 <section class="control-card">
                     <h2 class="section-title">
@@ -82,7 +84,7 @@
                                 <button id="groupSubscribe-getStatus" class="btn btn-secondary">getStatus</button>
                             </div>
                         </div>
-                        
+
                         <div class="social-card">
                             <h3 class="section-title">Подписка на уведомления</h3>
                             <div class="button-group">
@@ -91,7 +93,7 @@
                                 <button id="notifications-getStatus" class="btn btn-secondary">getStatus</button>
                             </div>
                         </div>
-                        
+
                         <div class="social-card">
                             <h3 class="section-title">Поставить оценку</h3>
                             <div class="button-group">
@@ -100,7 +102,7 @@
                                 <button id="rateGame-getStatus" class="btn btn-secondary">getStatus</button>
                             </div>
                         </div>
-                        
+
                         <div class="social-card">
                             <h3 class="section-title">Разместить пост</h3>
                             <div class="button-group">
@@ -109,7 +111,7 @@
                                 <button id="createPost-getStatus" class="btn btn-secondary">getStatus</button>
                             </div>
                         </div>
-                        
+
                         <div class="social-card">
                             <h3 class="section-title">Разместить сторис</h3>
                             <div class="button-group">
@@ -118,7 +120,7 @@
                                 <button id="createStory-getStatus" class="btn btn-secondary">getStatus</button>
                             </div>
                         </div>
-                        
+
                         <div class="social-card">
                             <h3 class="section-title">Пригласить друга</h3>
                             <div class="button-group">
@@ -127,7 +129,7 @@
                                 <button id="inviteFriend-getStatus" class="btn btn-secondary">getStatus</button>
                             </div>
                         </div>
-                        
+
                         <div class="social-card">
                             <h3 class="section-title">Добавить в избранное</h3>
                             <div class="button-group">
@@ -136,7 +138,7 @@
                                 <button id="addToFavorites-getStatus" class="btn btn-secondary">getStatus</button>
                             </div>
                         </div>
-                        
+
                         <div class="social-card">
                             <h3 class="section-title">Добавить на главный экран</h3>
                             <div class="button-group">
@@ -149,9 +151,9 @@
                 </section>
             </main>
         </div>
-    
+
     </div>
-   
+
     <script>
         function includeScript(src) {
             if (!src) return;
@@ -168,4 +170,5 @@
     </script>
     <script type="module" src="script.js"></script>
 </body>
+
 </html>
