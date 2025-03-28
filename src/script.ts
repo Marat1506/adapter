@@ -1,4 +1,4 @@
-import OkAdapter from "./OkAdapter";
+import OkAdapter from "./adapter/OkAdapter";
 
 
 
@@ -16,17 +16,22 @@ const rewardButton = document.getElementById('showReward');
 const saveButton = document.getElementById('saveGame');
 const loadButton = document.getElementById('loadGame');
 const addStatButton = document.getElementById('addStat');
-const removeStatButton = document.getElementById('removeStat');
+const purchase = document.getElementById('getPurchase');
+const infoButton = document.getElementById('info');
+const text = document.getElementById("textArea") as HTMLTextAreaElement
 
 interstitialButton?.addEventListener('click', () => showAd('interstitial'));
 rewardButton?.addEventListener('click', () => showAd('reward'));
 saveButton?.addEventListener('click', save);
 loadButton?.addEventListener('click', load);
-addStatButton?.addEventListener('click', sendStatistic);
-removeStatButton?.addEventListener('click', removeStatistic);
+addStatButton?.addEventListener('click', sendPost);
+purchase?.addEventListener('click', getPurchase);
+infoButton?.addEventListener('click', getUserInfo);
+
+
 
 function initAdapter(): boolean {
-   
+
     adapter = new OkAdapter();
     console.log("adapter2 =", adapter);
 
@@ -36,8 +41,30 @@ function initAdapter(): boolean {
     }).catch((error) => {
         console.error(`[error] Ошибка инициализации адаптера:`, error);
     });
-    
+
     return true;
+}
+
+async function getUserInfo() {
+    if (!isAdapterReady || !adapter) {
+        console.warn('Адаптер не готов');
+        return;
+    }
+
+    try {
+        const lbData = await adapter.getLbData();
+        
+        const userId = adapter.getId();
+        const userEntry = lbData.find(entry => entry.id === userId);
+        console.log("userEntry = ", userEntry)
+        if (userEntry) {
+            
+        } else {
+            console.warn('Пользователь не найден в лидерборде');
+        }
+    } catch (error) {
+        console.error('Ошибка получения данных:', error);
+    }
 }
 
 async function showAd(adType: AdType): Promise<void> {
@@ -50,9 +77,11 @@ async function showAd(adType: AdType): Promise<void> {
         if (adType === 'reward') {
             const watched = await adapter.showRewardedAds();
             lastAdTime = Date.now();
+            console.log("watched = ", watched)
             console.log(watched ? '[success] Награда получена!' : '[warning] Реклама закрыта до завершения');
         } else {
-            await adapter.showFullscreenAds();
+            const full = await adapter.showFullscreenAds();
+            console.log("showFullscreenAds = ", full)
             lastAdTime = Date.now();
             console.log(`[success] Реклама ${adType} показана`);
         }
@@ -69,8 +98,10 @@ async function save(): Promise<void> {
     console.log("adapter =", adapter);
 
     try {
-        const data = {};
-        await adapter.save(data);
+        console.log("text = ", text.value)
+
+        const gg = await adapter.save(text.value);
+        console.log("gg = ", gg)
         console.log("[success] Данные сохранены");
     } catch (error) {
         console.error("[error] Ошибка сохранения:", error);
@@ -93,18 +124,23 @@ async function load(): Promise<any> {
     }
 }
 
-function sendStatistic(): void {
+
+
+
+async function sendPost(): Promise<void> {
     if (isAdapterReady && adapter) {
-        adapter.reachGoal('stat_added');
+        const sendPost = await adapter.sendPost('SEND POST');
+        console.log("sendPost = ", sendPost)
     }
-    console.log("Сохранение статистики");
+    console.log("Отправлен запрос SendPost");
 }
 
-function removeStatistic(): void {
+function getPurchase(): void {
     if (isAdapterReady && adapter) {
-        adapter.reachGoal('stat_removed');
+        const puschase = adapter.getPurchase();
+        console.log("puschase = ", puschase)
     }
-    console.log('Удаление статистики');
+    console.log('получение списка активных покупок пользователя');
 }
 
 // window.API_callback = function(method: string, result: any, data: any): void {
@@ -113,19 +149,4 @@ function removeStatistic(): void {
 
 
 initAdapter();
-// } else {
-//     console.log('[info] Ожидание загрузки FAPI...');
-//     const checkFAPI = setInterval(() => {
-//         if (typeof FAPI !== 'undefined') {
-//             clearInterval(checkFAPI);
-//             initAdapter();
-//         }
-//     }, 100);
-    
-//     setTimeout(() => {
-//         if (!isAdapterReady) {
-//             clearInterval(checkFAPI);
-//             console.warn('[warning] FAPI не загружен');
-//         }
-//     }, 5000);
-// }
+

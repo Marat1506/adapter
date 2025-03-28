@@ -1,6 +1,6 @@
-import EventsCore from "./EventsCore";
-import { Empty, ICatalogItem, ILbEntrie, IPurchaseData } from "./interfaces";
-import Adapter from "./adapter/Adapter";
+import EventsCore from "../EventsCore";
+import { Empty, ICatalogItem, ILbEntrie, IPurchaseData } from "../interfaces";
+import Adapter from "./Adapter";
 
 const events: EventsCore = new EventsCore();
 
@@ -19,9 +19,9 @@ export default class OkAdapter extends Adapter {
     private appId: number = 512002798511;
     private appUrl: string = "https://ok.ru/game/" + this.appId;
 
-   
 
-    
+
+
 
     protected create(): void {
         this.initParams();
@@ -80,8 +80,8 @@ export default class OkAdapter extends Adapter {
 
     public isMember(): Promise<boolean> {
         return new Promise((resolve: any) => {
-            this.fapi.Client.call({"method":"group.getUserGroupsByIds", "uids": this.getId(), "group_id": String(this.group_id)}, (status: string, data: Array<any>, error: any) => {
-                if(status !== "ok")return resolve(false);
+            this.fapi.Client.call({ "method": "group.getUserGroupsByIds", "uids": this.getId(), "group_id": String(this.group_id) }, (status: string, data: Array<any>, error: any) => {
+                if (status !== "ok") return resolve(false);
                 return resolve(data.length ? (["active", "admin", "moderator"]).includes(data[0].status.toLowerCase()) : false);
             });
         });
@@ -131,7 +131,7 @@ export default class OkAdapter extends Adapter {
         // console.log("TEST", this.params, GAME_CODE);
         this.server.init("Adapter_test" + "OK", this.getId());
     }
-    
+
     public save(data: any): any {
         return Promise.all([this.saveOnServer(data), this.okSave(data)])
             .catch((e: any) => {
@@ -147,7 +147,7 @@ export default class OkAdapter extends Adapter {
 
     private __okSaveItem(key: string, value: number): void {
         try {
-            if(this.storageCache[key] === value)return;
+            if (this.storageCache[key] === value) return;
 
             this.storageCache[key] = value;
 
@@ -158,7 +158,7 @@ export default class OkAdapter extends Adapter {
             }, (...args) => {
                 console.log("save", key, value, args);
             });
-        } catch(e) {
+        } catch (e) {
             console.error(e);
         }
     }
@@ -179,12 +179,12 @@ export default class OkAdapter extends Adapter {
         return new Promise((resolve: any, reject) => {
             try {
                 this.fapi.Client.call({
-                    "method": "storage.get", 
+                    "method": "storage.get",
                     "keys": keys,
                 }, (result: string, data: any) => {
                     console.log("FAPI get", data);
                     try {
-                        if(result === "ok") {
+                        if (result === "ok") {
                             const obj: any = data.data || {};
 
                             Object.keys(obj).forEach((key: string) => {
@@ -193,13 +193,13 @@ export default class OkAdapter extends Adapter {
 
                             resolve(data.data || null);
                         }
-                    } catch(e) {
+                    } catch (e) {
                         console.error(e);
                     }
 
                     resolve(null);
                 });
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
                 resolve(null);
             }
@@ -263,7 +263,7 @@ export default class OkAdapter extends Adapter {
     public sendPost(message: string = ""): Promise<any> {
         message = message.replace("{url}", this.appUrl);
         this.fapi.UI.postMediatopic({
-            "media":[
+            "media": [
                 {
                     "type": "text",
                     "text": message
@@ -286,8 +286,8 @@ export default class OkAdapter extends Adapter {
 
     public isReview(): Promise<boolean> {
         return new Promise((resolve: any) => {
-            this.fapi.Client.call({"method":"apps.getAppUserRating", "app_id": this.appId}, (status: string, data: any, error: any) => {
-                if(error)console.error(error);
+            this.fapi.Client.call({ "method": "apps.getAppUserRating", "app_id": this.appId }, (status: string, data: any, error: any) => {
+                if (error) console.error(error);
                 resolve(status === "ok" && data.success && data.rating > 0);
             });
         });
@@ -295,8 +295,8 @@ export default class OkAdapter extends Adapter {
 
     public canReview(): Promise<boolean> {
         return new Promise((resolve: any) => {
-            this.fapi.Client.call({"method":"apps.getAppUserRating", "app_id": this.appId}, (status: string, data: any, error: any) => {
-                if(error)console.error(error);
+            this.fapi.Client.call({ "method": "apps.getAppUserRating", "app_id": this.appId }, (status: string, data: any, error: any) => {
+                if (error) console.error(error);
                 resolve(status === "ok" && !(data.success && data.rating > 0));
             });
         });
@@ -317,14 +317,15 @@ export default class OkAdapter extends Adapter {
 
     private getUsersData(ids: Array<string>): Promise<any> {
         return new Promise((resolve: any) => {
-            this.fapi.Client.call({"method":"users.getInfo", "fields":"first_name,last_name,pic128x128,uid,gender", "uids": ids, emptyPictures: true}, (status: string, data: Array<any>, error: any) => {
-                if(status !== "ok")return resolve([]);
+            this.fapi.Client.call({ "method": "users.getInfo", "fields": "first_name,last_name,pic128x128,uid,gender", "uids": ids, emptyPictures: true }, (status: string, data: Array<any>, error: any) => {
+                if (status !== "ok") return resolve([]);
                 return resolve(data);
             });
         });
     }
-    
+
     public getLbData(): Promise<Array<ILbEntrie>> {
+        console.log("вызвался метод getLbData = ")
         return super.getLbData()
             .then((arr: Array<ILbEntrie>) => {
                 return this.getUsersData(arr.map((data: ILbEntrie) => data.id))
@@ -335,7 +336,7 @@ export default class OkAdapter extends Adapter {
                         const f: any = (user: any) => {
                             const data: any = arr.find((el: ILbEntrie) => Number(el.id) == user.uid);
 
-                            if(!data)return;
+                            if (!data) return;
 
                             const firstName: string = user.first_name || "",
                                 lastName: string = user.last_name || "";
@@ -357,25 +358,25 @@ export default class OkAdapter extends Adapter {
 
         return new Promise((resolve: any, reject: any) => {
             const f: any = () => {
-                    if(attempts <= 0)return reject(null);
+                if (attempts <= 0) return reject(null);
 
-                    attempts-=1;
+                attempts -= 1;
 
-                    setTimeout(() => {
-                        this.getPurchase()
-                            .then((arr: Array<IPurchaseData>) => {
-                                if(arr.length) {
-                                    resolve(arr);
-                                } else {
-                                    f();
-                                }
-                            })
-                            .catch((e: any) => {
-                                console.error(e);
+                setTimeout(() => {
+                    this.getPurchase()
+                        .then((arr: Array<IPurchaseData>) => {
+                            if (arr.length) {
+                                resolve(arr);
+                            } else {
                                 f();
-                            });
-                    }, (1 + Math.pow(maxAttempts - attempts, 2) * .3) * 1000);
-                };
+                            }
+                        })
+                        .catch((e: any) => {
+                            console.error(e);
+                            f();
+                        });
+                }, (1 + Math.pow(maxAttempts - attempts, 2) * .3) * 1000);
+            };
 
             f();
         });
@@ -383,28 +384,28 @@ export default class OkAdapter extends Adapter {
 
     public consumePurchase(id: string, attempts: number = 3): Promise<any> {
         return this.server.request("https://bbb.dra.games/api/purchase/ok/close-transaction", {
-                "transaction_id": id,
-                "app_id": String(this.appId),
-                "user_id": this.getId(),
-                "sign": this.params
-            })
+            "transaction_id": id,
+            "app_id": String(this.appId),
+            "user_id": this.getId(),
+            "sign": this.params
+        })
             .then((e: any) => {
                 console.log("consumePurchase", e);
-                if(e.error)return Promise.reject(e.error);
+                if (e.error) return Promise.reject(e.error);
                 return true;
             })
             .catch((e: any) => {
                 console.error("consumePurchase", e);
-                if(attempts <= 1)return false;
+                if (attempts <= 1) return false;
                 return this.consumePurchase(id, attempts - 1);
             });
     }
 
     public getPurchase(attempts: number = 1): Promise<Array<IPurchaseData>> {
-        return this.server.request("https://bbb.dra.games/api/purchase/ok/get-transactions", {"app_id": String(this.appId), "user_id": this.getId()})
+        return this.server.request("https://bbb.dra.games/api/purchase/ok/get-transactions", { "app_id": String(this.appId), "user_id": this.getId() })
             .then((e: any) => {
                 console.log("getPurchase", e);
-                if(e.error)return Promise.reject(e.error);
+                if (e.error) return Promise.reject(e.error);
                 return e.data.filter((el: any) => {
                     return el["status"] !== "closed";
                 }).map((el: any) => {
@@ -416,13 +417,13 @@ export default class OkAdapter extends Adapter {
             })
             .catch((e: any) => {
                 console.error("getPurchase", e);
-                if(attempts <= 1)return [];
+                if (attempts <= 1) return [];
                 return this.getPurchase(attempts - 1);
             });
     }
 
     private getCatalogItemData(id: string): ICatalogItem | Empty {
-        if(!this.catalog)return null;
+        if (!this.catalog) return null;
 
         return this.catalog.find((el: ICatalogItem) => {
             return el.id === id;
@@ -440,7 +441,7 @@ export default class OkAdapter extends Adapter {
             id,//code
             data.priceValue || 1,//price
             null,//options
-            JSON.stringify({app_id: this.appId}),//attributes
+            JSON.stringify({ app_id: this.appId }),//attributes
             "ok",//currency
             "true"//callback
         );
@@ -449,7 +450,7 @@ export default class OkAdapter extends Adapter {
             .then(() => this.tryGetPurchase())
             .then((arr: Array<IPurchaseData>) => {
                 const el: IPurchaseData | Empty = arr.find((el1: IPurchaseData) => el1.productID === id);
-                if(!el)return false;
+                if (!el) return false;
                 return el;
             })
             .catch(() => false);
@@ -473,14 +474,14 @@ export default class OkAdapter extends Adapter {
             listeners.push(events.addOnceListener(key + "_error", error));
             listeners.push(events.addOnceListener(key + "_cancel", error));
         })
-        .then((data: any) => {
-            clear();
-            return Promise.resolve(data);
-        })
-        .catch((e: any) => {
-            clear();
-            return Promise.reject(e);
-        });
+            .then((data: any) => {
+                clear();
+                return Promise.resolve(data);
+            })
+            .catch((e: any) => {
+                clear();
+                return Promise.reject(e);
+            });
     }
 };
 
@@ -502,40 +503,40 @@ class FullscreenADS {
         const listeners: Array<any> = [];
 
         return new Promise((resolve: Function) => {
-                try {
-                    if(!this.fapi)return resolve(false, "fapi is not defined");
+            try {
+                if (!this.fapi) return resolve(false, "fapi is not defined");
 
-                    const t: number = Date.now();
+                const t: number = Date.now();
 
-                    if(Math.abs(t - this.last) < this.min) {
-                        return resolve(false);
-                    }
-
-                    this.last = t;
-
-                    let isOpened: boolean = false;
-
-                    listeners.push(events.addListener("showAd_ok", (e: any) => {
-                        if(e.data === "ad_prepared") {
-                            isOpened = true;
-                        } else if(e.data === "ad_shown") {
-                            resolve(true);
-                        }
-                    }));
-
-                    listeners.push(events.addListener("showAd_error", () => {
-                        resolve(false);
-                    }));
-
-                    this.fapi.UI.showAd();
-
-                    setTimeout(() => {
-                        if(!isOpened)resolve(false);
-                    }, 10000);
-                } catch(e) {
-                    resolve(false, e);
+                if (Math.abs(t - this.last) < this.min) {
+                    return resolve(false);
                 }
-            })
+
+                this.last = t;
+
+                let isOpened: boolean = false;
+
+                listeners.push(events.addListener("showAd_ok", (e: any) => {
+                    if (e.data === "ad_prepared") {
+                        isOpened = true;
+                    } else if (e.data === "ad_shown") {
+                        resolve(true);
+                    }
+                }));
+
+                listeners.push(events.addListener("showAd_error", () => {
+                    resolve(false);
+                }));
+
+                this.fapi.UI.showAd();
+
+                setTimeout(() => {
+                    if (!isOpened) resolve(false);
+                }, 10000);
+            } catch (e) {
+                resolve(false, e);
+            }
+        })
             .then((res: any) => {
                 listeners.forEach((f: any) => events.removeListener(f));
                 return res;
@@ -562,7 +563,7 @@ class RewardedADS {
     }
 
     private load(): void {
-        if(this.block || !this.fapi || this.ready || this.loading)return;
+        if (this.block || !this.fapi || this.ready || this.loading) return;
 
         this.loading = true;
 
@@ -572,7 +573,7 @@ class RewardedADS {
 
                 listeners.forEach((f: any) => events.removeListener(f));
 
-                if(!this.ready) {
+                if (!this.ready) {
                     setTimeout(() => this.load(), 10000);
                 }
             };
@@ -588,7 +589,7 @@ class RewardedADS {
             }));
 
             this.fapi.UI.loadAd();
-        } catch(e) {
+        } catch (e) {
             console.error(e);
             this.loading = false;
         }
@@ -601,8 +602,8 @@ class RewardedADS {
             let res: boolean = false;
 
             try {
-                if(!this.fapi)return resolve(false, "fapi is not defined");
-                if(!this.ready)return resolve(false);
+                if (!this.fapi) return resolve(false, "fapi is not defined");
+                if (!this.ready) return resolve(false);
 
                 let isOpened: boolean = false;
 
@@ -611,26 +612,26 @@ class RewardedADS {
                 }));
 
                 listeners.push(events.addListener("showLoadedAd_error", (e: any) => {
-                    if(e.data === "mp4_not_supported")this.block = true;
+                    if (e.data === "mp4_not_supported") this.block = true;
                     resolve(false);
                 }));
-                
+
                 this.fapi.UI.showLoadedAd();
 
                 setTimeout(() => {
-                    if(!isOpened)resolve(false);
+                    if (!isOpened) resolve(false);
                 }, 20000);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
                 resolve(res, e);
             }
         })
-        .then((res: any) => {
-            this.ready = false;
-            setTimeout(() => this.load(), 1000);
-            listeners.forEach((f: any) => events.removeListener(f));
-            return res;
-        });
+            .then((res: any) => {
+                this.ready = false;
+                setTimeout(() => this.load(), 1000);
+                listeners.forEach((f: any) => events.removeListener(f));
+                return res;
+            });
     }
 };
 
@@ -649,7 +650,7 @@ class StickyBanner {
     }
 
     public search(): Promise<any> {
-        if(!this.fapi || this.block)return Promise.resolve(false);
+        if (!this.fapi || this.block) return Promise.resolve(false);
 
         return new Promise((resolve: any) => {
             events.addOnceListener("requestBannerAds_ok", (e: any) => {
@@ -672,16 +673,16 @@ class StickyBanner {
     }
 
     public update(): void {
-        if(this.block || !this.visible)return;
+        if (this.block || !this.visible) return;
 
         this.search()
             .then((res: boolean) => {
-                if(res && this.visible)this.__show();
+                if (res && this.visible) this.__show();
             });
     }
 
     private __show(): void {
-        if(!this.ready)return;
+        if (!this.ready) return;
 
         this.fapi.invokeUIMethod("showBannerAds", this.side);
     }
@@ -699,7 +700,7 @@ class StickyBanner {
             const data: any = JSON.parse(json),
                 supported: Array<any> = data.supported;
 
-            if(false) {
+            if (false) {
                 bannerFormat = "bar_outer";
                 this.side = "bottom";
             } else {
@@ -709,11 +710,11 @@ class StickyBanner {
 
             bar = supported[bannerFormat];
 
-            if(!bar) {
+            if (!bar) {
                 this.block = true;
                 return;
             }
-            
+
             events.addOnceListener("setBannerFormat_ok", () => {
                 this.search();
             });
@@ -735,19 +736,19 @@ class StickyBanner {
     }
 
     public show(): void {
-        if(this.switch)return;
+        if (this.switch) return;
         this.switch = true;
         this.check();
     }
 
     public hide(): void {
-        if(!this.switch)return;
+        if (!this.switch) return;
         this.switch = false;
         this.check();
     }
 
     private check(): void {
-        if(!this.ready)return;
+        if (!this.ready) return;
 
         const listeners: Array<any> = [],
             end: any = () => {
@@ -755,9 +756,9 @@ class StickyBanner {
             };
 
         listeners.push(events.addOnceListener("isBannerAdsVisible_ok", (data: boolean) => {
-            if(Boolean(data) && !this.visible) {
+            if (Boolean(data) && !this.visible) {
                 this.__hide();
-            } else if(!Boolean(data) && this.visible) {
+            } else if (!Boolean(data) && this.visible) {
                 this.__show();
             }
 

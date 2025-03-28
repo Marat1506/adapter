@@ -1,37 +1,107 @@
-<!-- index.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Кнопки управления</title>
+    <title>Панель управления OK API</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
     <link rel="stylesheet" href="style.css">
     <script type="text/javascript" src="//api.ok.ru/js/fapi5.js" defer="defer"></script>
 </head>
 <body>
-    <div class="buttons-container">
-        <div class="row">
-            <button id="showInterstitial">show interstitial</button>
-            <button id="showReward">show reward</button>
-        </div>
-        
-        <div class="row">
-            <button id="saveGame">save</button>
-            <button id="loadGame">load</button>
-        </div>
-        
-        <div class="row">
-            <button id="addStat">add stat</button>
-            <button id="removeStat">remove stat</button>
-        </div>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Документация</h1>
+            <div class="status-indicator" id="apiStatus">OK API</div>
+        </header>
+
+        <main class="dashboard">
+            <!-- Блок рекламы -->
+            <section class="control-card">
+                <h2 class="section-title">
+                    <span class="icon">📢</span>
+                    ADV
+                </h2>
+                <div class="button-group">
+                    <button id="showInterstitial" class="btn btn-primary">
+                      
+                        show Interstitial
+                    </button>
+                    <button id="showReward" class="btn btn-secondary">
+                        
+                        show Reward
+                    </button>
+                </div>
+            </section>
+
+            <!-- Блок игрока -->
+            <section class="control-card">
+                <h2 class="section-title">
+                    <span class="icon">🎮</span>
+                    Player
+                </h2>
+                <div class="input-group">
+                    <textarea id="textArea" placeholder="Введите данные для сохранения..."></textarea>
+                    <div class="action-buttons">
+                        <button id="saveGame" class="btn btn-accent">
+                           
+                            Сохранить
+                        </button>
+                        <button id="loadGame" class="btn">
+                           
+                            Загрузить
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Блок платежей -->
+            <section class="control-card">
+                <h2 class="section-title">
+                    <span class="icon">💳</span>
+                    Purchase
+                </h2>
+                <div class="button-group">
+                    <button id="getPurchase" class="btn btn-primary">
+                        getPurchase
+                    </button>
+                </div>
+            </section>
+
+            <!-- Блок социальных функций -->
+            <section class="control-card">
+                <h2 class="section-title">
+                    <span class="icon">👥</span>
+                    Social
+                </h2>
+                <div class="button-group">
+                    <button id="info" class="btn btn-secondary">
+                        getInfoUser
+                    </button>
+                    <button id="sendPost" class="btn">
+                        sendPost
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <div id="userInfoContainer" class="user-info-panel"></div>
+            <div class="debug-console" id="debugConsole"></div>
+        </footer>
     </div>
 
-    <!-- <script>
-        console.log("Загрузка FAPI...");
-        setTimeout(() => {
-            console.log("FAPI:", typeof FAPI !== "undefined" ? "Доступен" : "Не найден");
-        }, 3000);
-    </script> -->
+    <script>
+        function includeScript(src) {
+            if(!src) return;
+            for (var j = 0; j < document.scripts.length; j++) {
+                if (document.scripts[j].src === src) return;
+            }
+            const script = document.createElement("script");
+            script.src = src;
+            document.head.appendChild(script);
+        }
+    </script>
     <script type="module" src="script.js"></script>
 </body>
 </html>
